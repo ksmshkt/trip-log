@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trip Log</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <span class="logo">Trip Log</span>
+  <button id="btn-logout" class="btn-text hidden">ログアウト</button>
+</header>
+
+<main>
+
+  <!-- 認証画面 -->
+  <section id="auth-section">
+    <h2 id="auth-title">ログイン</h2>
+    <div class="form-group">
+      <label for="auth-email">メールアドレス</label>
+      <input type="email" id="auth-email" placeholder="example@email.com">
+    </div>
+    <div class="form-group">
+      <label for="auth-password">パスワード</label>
+      <input type="password" id="auth-password" placeholder="6文字以上">
+    </div>
+    <p id="auth-error" class="error hidden"></p>
+    <div class="form-actions">
+      <button id="btn-auth" class="btn-primary">ログイン</button>
+    </div>
+    <p class="auth-switch">
+      アカウントをお持ちでない方は
+      <a href="#" id="btn-switch-mode">新規登録</a>
+    </p>
+  </section>
+
+  <!-- 旅行一覧 -->
+  <section id="trip-list-section" class="hidden">
+    <div class="section-header">
+      <h2>旅行一覧</h2>
+      <button id="btn-new-trip">＋ 新しい旅行</button>
+    </div>
+    <div id="trip-list"></div>
+    <p id="trip-empty" class="empty hidden">旅行がまだありません</p>
+  </section>
+
+  <!-- 旅行作成フォーム -->
+  <section id="trip-form-section" class="hidden">
+    <h2>旅行を作成</h2>
+    <div class="form-group">
+      <label for="trip-title">タイトル</label>
+      <input type="text" id="trip-title" placeholder="例: 台湾旅行 2026">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="trip-start">出発日</label>
+        <input type="date" id="trip-start">
+      </div>
+      <div class="form-group">
+        <label for="trip-end">帰国日</label>
+        <input type="date" id="trip-end">
+      </div>
+    </div>
+    <div class="form-actions">
+      <button id="btn-cancel-trip" class="btn-secondary">キャンセル</button>
+      <button id="btn-save-trip" class="btn-primary">作成</button>
+    </div>
+  </section>
+
+  <!-- 旅行詳細 -->
+  <section id="trip-detail-section" class="hidden">
+    <button id="btn-back" class="btn-back">← 一覧に戻る</button>
+    <div class="trip-detail-header">
+      <h2 id="detail-title"></h2>
+      <p id="detail-date" class="date-range"></p>
+    </div>
+
+    <!-- ToDoリスト -->
+    <div class="todo-section">
+      <h3>準備リスト</h3>
+      <div class="todo-input-row">
+        <input type="text" id="todo-input" placeholder="例: パスポート確認">
+        <button id="btn-add-todo" class="btn-primary">追加</button>
+      </div>
+      <ul id="todo-list"></ul>
+      <p id="todo-empty" class="empty hidden">ToDoがありません</p>
+    </div>
+  </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="app.js"></script>
+</body>
+</html>
