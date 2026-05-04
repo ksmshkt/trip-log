@@ -4,6 +4,7 @@ const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let currentUser = null;
 let currentTripId = null;
+let currentTrip = null;
 let isLogin = true;
 
 // ── セクション切り替え ──
@@ -102,7 +103,7 @@ async function loadTrips() {
   }
   empty.classList.add('hidden');
   list.innerHTML = data.map(t => `
-    <div class="trip-card" onclick="openTrip('${t.id}', '${t.title}', '${t.start_date||''}', '${t.end_date||''}')">
+    <div class="trip-card" onclick="openTrip('${t.id}')">
       <div>
         <div class="trip-card-title">${t.title}</div>
         <div class="trip-card-date">${fmtDate(t.start_date)} 〜 ${fmtDate(t.end_date)}</div>
@@ -136,15 +137,19 @@ document.getElementById('btn-save-trip').onclick = async () => {
 
   if (error) { console.error(error); alert('保存に失敗しました'); return; }
 
-  openTrip(data.id, data.title, data.start_date, data.end_date);
+  openTrip(data.id);
 };
 
 // ── 旅行詳細 ──
-function openTrip(id, title, start, end) {
+async function openTrip(id) {
   currentTripId = id;
-  document.getElementById('detail-title').textContent = title;
-  document.getElementById('detail-date').textContent = `${fmtDate(start)} 〜 ${fmtDate(end)}`;
+  const { data: trip, error } = await db.from('trips').select('*').eq('id', id).single();
+  if (error) { console.error(error); return; }
+  currentTrip = trip;
+  document.getElementById('detail-title').textContent = trip.title;
+  document.getElementById('detail-date').textContent = `${fmtDate(trip.start_date)} 〜 ${fmtDate(trip.end_date)}`;
   loadTodos();
+  loadExpenses();
   showSection('detail');
 }
 
@@ -209,6 +214,84 @@ async function toggleTodo(id, currentDone) {
 async function deleteTodo(id) {
   await db.from('todos').delete().eq('id', id);
   loadTodos();
+}
+
+// ── 支出 ──
+async function loadExpenses() {
+  const { data, error } = await db
+    .from('expenses')
+    .select('*')
+    .eq('trip_id', currentTripId)
+    .order('date', { ascending: false });
+
+  if (error) { console.error(error); return; }
+
+  const listEl   = document.getElementById('expense-list');
+  const emptyEl  = document.getElementById('expense-empty');
+  const totalEl  = document.getElementById('expense-total');
+  const budgetEl = document.getElementById('budget-display');
+
+  const total  = data.reduce((sum, e) => sum + (e.amount || 0), 0);
+  const budget = currentTrip?.budget;
+
+  if (budget) {
+    const remaining = budget - total;
+    budgetEl.textContent = `予算: ${Number(budget).toLocaleString()}　残額: ${remaining.toLocaleString()}`;
+    budgetEl.classList.remove('hidden');
+  } else {
+    budgetEl.classList.add('hidden');
+  }
+
+  if (!data.length) {
+    listEl.innerHTML = '';
+    emptyEl.classList.remove('hidden');
+    totalEl.classList.add('hidden');
+    return;
+  }
+
+  emptyEl.classList.add('hidden');
+  totalEl.textContent = `合計: ${total.toLocaleString()}`;
+  totalEl.classList.remove('hidden');
+
+  listEl.innerHTML = data.map(e => `
+    <div class="expense-item">
+      <span class="exp-date">${fmtDate(e.date)}</span>
+      <span class="exp-category">${e.category}</span>
+      <span class="exp-amount">${Number(e.amount).toLocaleString()}</span>
+      <span class="exp-memo">${e.memo || ''}</span>
+      <button class="exp-del" onclick="deleteExpense('${e.id}')">×</button>
+    </div>
+  `).join('');
+}
+
+document.getElementById('btn-add-expense').onclick = addExpense;
+
+async function addExpense() {
+  const category = document.getElementById('exp-category').value;
+  const amount   = parseFloat(document.getElementById('exp-amount').value);
+  const memo     = document.getElementById('exp-memo').value.trim();
+  const date     = document.getElementById('exp-date').value;
+
+  if (!amount || amount <= 0) { alert('金額を入力してください'); return; }
+  if (!date) { alert('日付を選択してください'); return; }
+
+  const { error } = await db.from('expenses').insert({
+    trip_id: currentTripId,
+    category,
+    amount,
+    memo: memo || null,
+    date,
+  });
+
+  if (error) { console.error(error); alert('保存に失敗しました'); return; }
+  document.getElementById('exp-amount').value = '';
+  document.getElementById('exp-memo').value = '';
+  loadExpenses();
+}
+
+async function deleteExpense(id) {
+  await db.from('expenses').delete().eq('id', id);
+  loadExpenses();
 }
 
 // ── 初期化 ──
