@@ -103,6 +103,7 @@ button {
 
 .trip-detail-header { margin-bottom: 24px; }
 .date-range { font-size: 13px; color: #888; margin-top: 4px; }
+.detail-budget { font-size: 13px; color: #555; margin-top: 4px; }
 
 .todo-section {
   background: #fff;

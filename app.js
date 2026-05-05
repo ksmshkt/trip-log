@@ -118,6 +118,7 @@ document.getElementById('btn-new-trip').onclick = () => {
   document.getElementById('trip-title').value = '';
   document.getElementById('trip-start').value = '';
   document.getElementById('trip-end').value = '';
+  document.getElementById('trip-budget').value = '';
   showSection('form');
 };
 
@@ -127,11 +128,13 @@ document.getElementById('btn-save-trip').onclick = async () => {
   const title = document.getElementById('trip-title').value.trim();
   const start_date = document.getElementById('trip-start').value || null;
   const end_date = document.getElementById('trip-end').value || null;
+  const budgetVal = document.getElementById('trip-budget').value;
+  const budget = budgetVal ? parseFloat(budgetVal) : null;
   if (!title) { alert('タイトルを入力してください'); return; }
 
   const { data, error } = await db
     .from('trips')
-    .insert({ title, start_date, end_date, user_id: currentUser.id })
+    .insert({ title, start_date, end_date, budget, user_id: currentUser.id })
     .select()
     .single();
 
@@ -148,6 +151,13 @@ async function openTrip(id) {
   currentTrip = trip;
   document.getElementById('detail-title').textContent = trip.title;
   document.getElementById('detail-date').textContent = `${fmtDate(trip.start_date)} 〜 ${fmtDate(trip.end_date)}`;
+  const budgetInfo = document.getElementById('detail-budget');
+  if (trip.budget) {
+    budgetInfo.textContent = `予算: ¥${Number(trip.budget).toLocaleString()}`;
+    budgetInfo.classList.remove('hidden');
+  } else {
+    budgetInfo.classList.add('hidden');
+  }
   loadTodos();
   loadExpenses();
   showSection('detail');
@@ -236,7 +246,7 @@ async function loadExpenses() {
 
   if (budget) {
     const remaining = budget - total;
-    budgetEl.textContent = `予算: ${Number(budget).toLocaleString()}　残額: ${remaining.toLocaleString()}`;
+    budgetEl.textContent = `予算: ¥${Number(budget).toLocaleString()}　残額: ¥${remaining.toLocaleString()}`;
     budgetEl.classList.remove('hidden');
   } else {
     budgetEl.classList.add('hidden');
@@ -250,14 +260,14 @@ async function loadExpenses() {
   }
 
   emptyEl.classList.add('hidden');
-  totalEl.textContent = `合計: ${total.toLocaleString()}`;
+  totalEl.textContent = `合計: ¥${total.toLocaleString()}`;
   totalEl.classList.remove('hidden');
 
   listEl.innerHTML = data.map(e => `
     <div class="expense-item">
       <span class="exp-date">${fmtDate(e.date)}</span>
       <span class="exp-category">${e.category}</span>
-      <span class="exp-amount">${Number(e.amount).toLocaleString()}</span>
+      <span class="exp-amount">¥${Number(e.amount).toLocaleString()}</span>
       <span class="exp-memo">${e.memo || ''}</span>
       <button class="exp-del" onclick="deleteExpense('${e.id}')">×</button>
     </div>

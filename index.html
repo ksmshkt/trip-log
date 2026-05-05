@@ -63,6 +63,10 @@
         <input type="date" id="trip-end">
       </div>
     </div>
+    <div class="form-group">
+      <label for="trip-budget">予算（任意）</label>
+      <input type="number" id="trip-budget" placeholder="例: 150000" min="0">
+    </div>
     <div class="form-actions">
       <button id="btn-cancel-trip" class="btn-secondary">キャンセル</button>
       <button id="btn-save-trip" class="btn-primary">作成</button>
@@ -75,6 +79,7 @@
     <div class="trip-detail-header">
       <h2 id="detail-title"></h2>
       <p id="detail-date" class="date-range"></p>
+      <p id="detail-budget" class="detail-budget hidden"></p>
     </div>
 
     <!-- ToDoリスト -->
