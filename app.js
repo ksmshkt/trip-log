@@ -182,6 +182,16 @@ document.getElementById('btn-back').onclick = () => {
   showSection('list');
 };
 
+document.getElementById('btn-delete-trip').onclick = async () => {
+  if (!confirm(`「${currentTrip.title}」を削除しますか？\nToDo・支出も含めてすべて削除されます。`)) return;
+
+  const { error } = await db.from('trips').delete().eq('id', currentTripId);
+  if (error) { console.error(error); alert('削除に失敗しました'); return; }
+
+  loadTrips();
+  showSection('list');
+};
+
 // ── ToDo ──
 async function loadTodos() {
   const { data, error } = await db
