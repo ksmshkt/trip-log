@@ -1,3 +1,17 @@
+const CATEGORIES = [
+  '食費',
+  '交通費',
+  '航空券',
+  '宿泊費',
+  '観光・アクティビティ',
+  '買い物・お土産',
+  '通信費',
+  '保険・手数料',
+  'チップ',
+  '医療費',
+  'その他',
+];
+
 const SUPABASE_URL = 'https://irowrhywlanakohpvdsa.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlyb3dyaHl3bGFuYWtvaHB2ZHNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0OTI2MjMsImV4cCI6MjA5MjA2ODYyM30.WLyZn59wW5TK3hMlt_XbBGzFZMBaPDDvQK3uGacCTQU';
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -306,6 +320,9 @@ async function deleteExpense(id) {
 
 // ── 初期化 ──
 (async () => {
+  document.getElementById('exp-category').innerHTML =
+    CATEGORIES.map(c => `<option value="${c}">${c}</option>`).join('');
+
   const { data: { session } } = await db.auth.getSession();
   if (session) {
     currentUser = session.user;
