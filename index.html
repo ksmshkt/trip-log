@@ -85,6 +85,25 @@
       <p id="detail-budget" class="detail-budget hidden"></p>
     </div>
 
+    <!-- フォトアルバム -->
+    <div class="photo-section">
+      <h3>フォトアルバム</h3>
+      <div id="photo-link-view" class="hidden">
+        <a id="photo-link" href="#" target="_blank" rel="noopener">URLを開く →</a>
+        <button id="btn-photo-edit" class="btn-text">変更</button>
+        <button id="btn-photo-delete" class="btn-text btn-text-danger">削除</button>
+      </div>
+      <div id="photo-input-view">
+        <label class="photo-label">アルバムURL</label>
+        <div class="photo-input-row">
+          <input type="url" id="photo-url-input" placeholder="https://photos.google.com/...">
+          <button id="btn-photo-save" class="btn-primary">保存</button>
+        </div>
+        <p class="photo-hint">Google フォトなどの共有リンクを貼り付けてください</p>
+        <p id="photo-error" class="error hidden"></p>
+      </div>
+    </div>
+
     <!-- ToDoリスト -->
     <div class="todo-section">
       <h3>準備リスト</h3>

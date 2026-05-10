@@ -172,10 +172,58 @@ async function openTrip(id) {
   } else {
     budgetInfo.classList.add('hidden');
   }
+  renderPhotoUrl(trip.photo_url);
   loadTodos();
   loadExpenses();
   showSection('detail');
 }
+
+// ── フォトアルバム ──
+function renderPhotoUrl(url) {
+  const linkView  = document.getElementById('photo-link-view');
+  const inputView = document.getElementById('photo-input-view');
+  const link      = document.getElementById('photo-link');
+  const input     = document.getElementById('photo-url-input');
+  document.getElementById('photo-error').classList.add('hidden');
+
+  if (url) {
+    link.href = url;
+    linkView.classList.remove('hidden');
+    inputView.classList.add('hidden');
+  } else {
+    input.value = '';
+    linkView.classList.add('hidden');
+    inputView.classList.remove('hidden');
+  }
+}
+
+document.getElementById('btn-photo-save').onclick = async () => {
+  const url = document.getElementById('photo-url-input').value.trim();
+  const errEl = document.getElementById('photo-error');
+  errEl.classList.add('hidden');
+
+  if (!url) { errEl.textContent = 'URLを入力してください'; errEl.classList.remove('hidden'); return; }
+
+  const { error } = await db.from('trips').update({ photo_url: url }).eq('id', currentTripId);
+  if (error) { console.error(error); errEl.textContent = '保存に失敗しました'; errEl.classList.remove('hidden'); return; }
+
+  currentTrip.photo_url = url;
+  renderPhotoUrl(url);
+};
+
+document.getElementById('btn-photo-delete').onclick = async () => {
+  if (!confirm('アルバムURLを削除しますか？')) return;
+  const { error } = await db.from('trips').update({ photo_url: null }).eq('id', currentTripId);
+  if (error) { console.error(error); alert('削除に失敗しました'); return; }
+  currentTrip.photo_url = null;
+  renderPhotoUrl(null);
+};
+
+document.getElementById('btn-photo-edit').onclick = () => {
+  document.getElementById('photo-url-input').value = currentTrip.photo_url || '';
+  document.getElementById('photo-link-view').classList.add('hidden');
+  document.getElementById('photo-input-view').classList.remove('hidden');
+};
 
 document.getElementById('btn-back').onclick = () => {
   loadTrips();
