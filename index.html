@@ -77,12 +77,43 @@
   <section id="trip-detail-section" class="hidden">
     <div class="detail-top-bar">
       <button id="btn-back" class="btn-back">← 一覧に戻る</button>
-      <button id="btn-delete-trip" class="btn-danger">削除</button>
+      <div class="detail-top-actions">
+        <button id="btn-edit-trip" class="btn-text">編集</button>
+        <button id="btn-delete-trip" class="btn-danger">削除</button>
+      </div>
     </div>
-    <div class="trip-detail-header">
+
+    <!-- 表示モード -->
+    <div id="trip-detail-header" class="trip-detail-header">
       <h2 id="detail-title"></h2>
       <p id="detail-date" class="date-range"></p>
       <p id="detail-budget" class="detail-budget hidden"></p>
+    </div>
+
+    <!-- 編集フォーム -->
+    <div id="trip-edit-form" class="trip-edit-form hidden">
+      <div class="form-group">
+        <label for="edit-title">タイトル</label>
+        <input type="text" id="edit-title">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="edit-start">出発日</label>
+          <input type="date" id="edit-start">
+        </div>
+        <div class="form-group">
+          <label for="edit-end">帰国日</label>
+          <input type="date" id="edit-end">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="edit-budget">予算（任意）</label>
+        <input type="number" id="edit-budget" min="0">
+      </div>
+      <div class="form-actions">
+        <button id="btn-cancel-edit" class="btn-secondary">キャンセル</button>
+        <button id="btn-save-edit" class="btn-primary">保存</button>
+      </div>
     </div>
 
     <!-- フォトアルバム -->

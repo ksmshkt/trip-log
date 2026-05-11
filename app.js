@@ -225,6 +225,56 @@ document.getElementById('btn-photo-edit').onclick = () => {
   document.getElementById('photo-input-view').classList.remove('hidden');
 };
 
+// ── 旅行編集 ──
+function showEditForm() {
+  document.getElementById('edit-title').value  = currentTrip.title || '';
+  document.getElementById('edit-start').value  = currentTrip.start_date || '';
+  document.getElementById('edit-end').value    = currentTrip.end_date || '';
+  document.getElementById('edit-budget').value = currentTrip.budget || '';
+  document.getElementById('trip-detail-header').classList.add('hidden');
+  document.getElementById('trip-edit-form').classList.remove('hidden');
+}
+
+function hideEditForm() {
+  document.getElementById('trip-edit-form').classList.add('hidden');
+  document.getElementById('trip-detail-header').classList.remove('hidden');
+}
+
+document.getElementById('btn-edit-trip').onclick = showEditForm;
+document.getElementById('btn-cancel-edit').onclick = hideEditForm;
+
+document.getElementById('btn-save-edit').onclick = async () => {
+  const title      = document.getElementById('edit-title').value.trim();
+  const start_date = document.getElementById('edit-start').value || null;
+  const end_date   = document.getElementById('edit-end').value || null;
+  const budgetVal  = document.getElementById('edit-budget').value;
+  const budget     = budgetVal ? parseFloat(budgetVal) : null;
+
+  if (!title) { alert('タイトルを入力してください'); return; }
+
+  const { error } = await db
+    .from('trips')
+    .update({ title, start_date, end_date, budget })
+    .eq('id', currentTripId);
+
+  if (error) { console.error(error); alert('保存に失敗しました'); return; }
+
+  Object.assign(currentTrip, { title, start_date, end_date, budget });
+
+  document.getElementById('detail-title').textContent = title;
+  document.getElementById('detail-date').textContent = `${fmtDate(start_date)} 〜 ${fmtDate(end_date)}`;
+  const budgetInfo = document.getElementById('detail-budget');
+  if (budget) {
+    budgetInfo.textContent = `予算: ¥${Number(budget).toLocaleString()}`;
+    budgetInfo.classList.remove('hidden');
+  } else {
+    budgetInfo.classList.add('hidden');
+  }
+
+  loadExpenses();
+  hideEditForm();
+};
+
 document.getElementById('btn-back').onclick = () => {
   loadTrips();
   showSection('list');

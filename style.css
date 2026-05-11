@@ -103,6 +103,15 @@ button {
 
 .detail-top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
 .detail-top-bar #btn-back { margin-bottom: 0; }
+.detail-top-actions { display: flex; align-items: center; gap: 6px; }
+
+.trip-edit-form {
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
 .btn-danger { background: none; color: #c00; border: 1px solid #c00; font-size: 12px; padding: 5px 10px; }
 .btn-danger:hover { background: #c00; color: #fff; }
 
