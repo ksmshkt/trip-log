@@ -23,10 +23,11 @@ let isLogin = true;
 
 // ── セクション切り替え ──
 const sections = {
-  auth: document.getElementById('auth-section'),
-  list: document.getElementById('trip-list-section'),
-  form: document.getElementById('trip-form-section'),
-  detail: document.getElementById('trip-detail-section'),
+  auth:     document.getElementById('auth-section'),
+  list:     document.getElementById('trip-list-section'),
+  form:     document.getElementById('trip-form-section'),
+  detail:   document.getElementById('trip-detail-section'),
+  settings: document.getElementById('settings-section'),
 };
 function showSection(name) {
   Object.values(sections).forEach(s => s.classList.add('hidden'));
@@ -89,11 +90,13 @@ document.getElementById('btn-logout').onclick = async () => {
   await db.auth.signOut();
   currentUser = null;
   document.getElementById('btn-logout').classList.add('hidden');
+  document.getElementById('btn-settings').classList.add('hidden');
   showSection('auth');
 };
 
 function onLogin() {
   document.getElementById('btn-logout').classList.remove('hidden');
+  document.getElementById('btn-settings').classList.remove('hidden');
   loadTrips();
   showSection('list');
 }
@@ -425,6 +428,85 @@ async function deleteExpense(id) {
   await db.from('expenses').delete().eq('id', id);
   loadExpenses();
 }
+
+// ── 設定 ──
+document.getElementById('btn-settings').onclick = () => {
+  loadLineSettings();
+  showSection('settings');
+};
+
+document.getElementById('btn-settings-back').onclick = () => {
+  loadTrips();
+  showSection('list');
+};
+
+async function loadLineSettings() {
+  const displayEl   = document.getElementById('line-id-display');
+  const inputViewEl = document.getElementById('line-id-input-view');
+  const valueEl     = document.getElementById('line-id-value');
+  const inputEl     = document.getElementById('line-id-input');
+  const cancelEl    = document.getElementById('btn-line-cancel');
+  document.getElementById('line-error').classList.add('hidden');
+
+  const { data } = await db
+    .from('profiles')
+    .select('line_user_id')
+    .eq('id', currentUser.id)
+    .single();
+
+  if (data?.line_user_id) {
+    valueEl.textContent = data.line_user_id;
+    inputEl.value = '';
+    displayEl.classList.remove('hidden');
+    inputViewEl.classList.add('hidden');
+  } else {
+    displayEl.classList.add('hidden');
+    inputViewEl.classList.remove('hidden');
+    cancelEl.classList.add('hidden');
+  }
+}
+
+document.getElementById('btn-line-edit').onclick = () => {
+  document.getElementById('line-id-display').classList.add('hidden');
+  const inputViewEl = document.getElementById('line-id-input-view');
+  inputViewEl.classList.remove('hidden');
+  document.getElementById('btn-line-cancel').classList.remove('hidden');
+  document.getElementById('line-id-input').value = document.getElementById('line-id-value').textContent;
+  document.getElementById('line-error').classList.add('hidden');
+};
+
+document.getElementById('btn-line-cancel').onclick = () => {
+  document.getElementById('line-id-input-view').classList.add('hidden');
+  document.getElementById('line-id-display').classList.remove('hidden');
+};
+
+document.getElementById('btn-line-save').onclick = async () => {
+  const line_user_id = document.getElementById('line-id-input').value.trim();
+  const errEl = document.getElementById('line-error');
+  errEl.classList.add('hidden');
+
+  if (!line_user_id) {
+    errEl.textContent = 'LINE IDを入力してください';
+    errEl.classList.remove('hidden');
+    return;
+  }
+
+  const { error } = await db
+    .from('profiles')
+    .upsert({ id: currentUser.id, line_user_id }, { onConflict: 'id' });
+
+  if (error) {
+    console.error(error);
+    errEl.textContent = '保存に失敗しました';
+    errEl.classList.remove('hidden');
+    return;
+  }
+
+  document.getElementById('line-id-value').textContent = line_user_id;
+  document.getElementById('line-id-input').value = '';
+  document.getElementById('line-id-display').classList.remove('hidden');
+  document.getElementById('line-id-input-view').classList.add('hidden');
+};
 
 // ── 初期化 ──
 (async () => {

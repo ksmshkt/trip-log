@@ -184,6 +184,20 @@ ul#todo-list { list-style: none; }
 
 .loading { color: #aaa; font-size: 13px; text-align: center; padding: 24px 0; }
 
+.header-actions { display: flex; align-items: center; gap: 4px; }
+
+.settings-card {
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.settings-current-label { font-size: 12px; color: #666; margin-bottom: 4px; }
+.settings-current-value { font-size: 14px; font-weight: 600; margin-bottom: 8px; word-break: break-all; }
+.settings-hint { font-size: 12px; color: #aaa; line-height: 1.6; margin-top: 8px; margin-bottom: 4px; }
+
 .expense-section {
   background: #fff;
   border: 1px solid #e5e5e5;

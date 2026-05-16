@@ -10,7 +10,10 @@
 
 <header>
   <span class="logo">Trip Log</span>
-  <button id="btn-logout" class="btn-text hidden">ログアウト</button>
+  <div class="header-actions">
+    <button id="btn-settings" class="btn-text hidden">設定</button>
+    <button id="btn-logout" class="btn-text hidden">ログアウト</button>
+  </div>
 </header>
 
 <main>
@@ -178,6 +181,36 @@
       <div id="expense-list"></div>
       <p id="expense-empty" class="empty hidden">支出がありません</p>
       <div id="expense-total" class="expense-total hidden"></div>
+    </div>
+  </section>
+
+  <!-- 設定画面 -->
+  <section id="settings-section" class="hidden">
+    <button id="btn-settings-back" class="btn-back">← 一覧に戻る</button>
+    <h2>設定</h2>
+
+    <div class="settings-card">
+      <h3>LINE通知設定</h3>
+      <div id="line-id-display" class="hidden">
+        <p class="settings-current-label">現在のLINE ID</p>
+        <p id="line-id-value" class="settings-current-value"></p>
+        <button id="btn-line-edit" class="btn-text">変更</button>
+      </div>
+      <div id="line-id-input-view">
+        <div class="form-group">
+          <label for="line-id-input">LINE ID</label>
+          <input type="text" id="line-id-input" placeholder="例: U1234567890abcdef">
+        </div>
+        <p class="settings-hint">
+          LINE IDの確認方法：<br>
+          LINEアプリ → プロフィール → 設定 → マイVOOMアカウント
+        </p>
+        <div class="form-actions">
+          <button id="btn-line-cancel" class="btn-secondary hidden">キャンセル</button>
+          <button id="btn-line-save" class="btn-primary">保存</button>
+        </div>
+        <p id="line-error" class="error hidden"></p>
+      </div>
     </div>
   </section>
 
